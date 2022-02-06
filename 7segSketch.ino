@@ -1,5 +1,10 @@
-using namespace std;
-
+// Constants
+int flashTime = 1;
+int actualTime = 249;
+int speedAdjustment = .9;
+int del = 400;
+int maxVal = 1023;
+int theNums[] = {&zero, &one, &two, &three, &four, &five, &six, &seven, &eight, &nine};
 
 // Digits 
 int D1 = 2;
@@ -16,6 +21,7 @@ int segE = 10;
 int segF = 11;
 int segG = 12;
 int btn = 13;
+int btn2 = A1;
 
 
 void setup() {
@@ -45,30 +51,31 @@ void setup() {
 // Main function
 // *******************************************
 void loop() {
-  int flashTime = 1;
-  int actualTime = 249 - (.18 + .18);
-  bool done = false;
-  int theNums[] = {&zero, &one, &two, &three, &four, &five, &six, &seven, &eight, &nine};
 
-
-
+  stateOne:
   if (digitalRead(btn) == HIGH) {
-    delay(500);
+    
+    delay(del);
 
-
-    for (int x = 0; x < 10; x++) {        // Thousands
-      //actualTime -= 1;
+    for (int x = 0; x < 10; x++) {
+      // Thousands
       for (int i = 0; i < 10; i++) {      // Hundreds
-        actualTime -= .9;
+        actualTime -= speedAdjustment;
+        
         for (int j = 0; j < 6; j++) {     // Tens
-          //actualTime -= .9;
           
           for (int k = 0; k < 10; k++) {  // Ones
 
             if (digitalRead(btn) == HIGH) {
-                delay(5000);
+                pause(btn, del);
             }
-            doCount(theNums[k], theNums[j], theNums[i], theNums[x],flashTime, actualTime);
+
+            // If the reset button is pressed, bo back to state 1
+            if (analogRead(btn2) >= maxVal) { 
+              goto stateOne;
+            }
+            
+            showDigits(theNums[k], theNums[j], theNums[i], theNums[x],flashTime, actualTime);
           }
         }
       }
@@ -76,15 +83,21 @@ void loop() {
   }
 }
 
-
-
-
 // *******************************************
 // Helper functions
 // *******************************************
 
 
-int doCount(int (*ones)(int, int), int (*tens)(int, int),int (*hundreds)(int, int), int (*thousands)(int, int),int theFlashTime, int theActualTime) {
+void pause(int theBtn, int theDel) {
+
+    delay(theDel);
+    while (digitalRead(theBtn) == LOW) { // While the button is not pressed
+      delay(theDel);
+    }
+}
+
+
+int showDigits(int (*ones)(int, int), int (*tens)(int, int),int (*hundreds)(int, int), int (*thousands)(int, int),int theFlashTime, int theActualTime) {
 
   int cnt = 0;
   while (cnt < theActualTime) {

@@ -4,13 +4,16 @@ int actualTime = 249;
 int speedAdjustment = .9;
 int del = 400;
 int maxVal = 1023;
-int theNums[] = {&zero, &one, &two, &three, &four, &five, &six, &seven, &eight, &nine};
+int maxCount = 10;
+int minCount = 6;
+int theNums[] = { &zero, &one, &two, &three, &four, &five, &six, &seven, &eight, &nine };
 
 // Digits 
 int D1 = 2;
 int D2 = 3; 
 int D3 = 4;
 int D4 = 5;
+int allDigits[] = { D1, D2, D3, D4 };
 
 // Segments
 int segA = 6;
@@ -22,34 +25,23 @@ int segF = 11;
 int segG = 12;
 int btn = 13;
 int btn2 = A1;
-
+int allSegments[] = { segA, segB, segC, segD, segE, segF, segG };
 
 void setup() {
-  pinMode(D1, OUTPUT);
-  pinMode(D2, OUTPUT);
-  pinMode(D3, OUTPUT);
-  pinMode(D4, OUTPUT);
-
-  pinMode(segA, OUTPUT);
-  pinMode(segB, OUTPUT);
-  pinMode(segC, OUTPUT);
-  pinMode(segD, OUTPUT);
-  pinMode(segE, OUTPUT);
-  pinMode(segF, OUTPUT);
-  pinMode(segG, OUTPUT);
-  pinMode(btn, INPUT);
-
-  digitalWrite(D1, HIGH);
-  digitalWrite(D2, HIGH);
-  digitalWrite(D3, HIGH);
-  digitalWrite(D4, HIGH);
   
+  for (int i = 0; i < 4; i++) {         // remove magic number
+    pinMode(allDigits[i], OUTPUT);
+    digitalWrite(allDigits[i], HIGH);
+  }
+  
+  for (int i = 0; i < 7; i++) {         // remove magic number 
+    pinMode(allSegments[i], OUTPUT);
+}
+  
+  pinMode(btn, INPUT);
   Serial.begin(9600);
 }
 
-// *******************************************
-// Main function
-// *******************************************
 void loop() {
 
   stateOne:
@@ -57,14 +49,14 @@ void loop() {
     
     delay(del);
 
-    for (int x = 0; x < 10; x++) {
+    for (int x = 0; x < maxCount; x++) {
       // Thousands
-      for (int i = 0; i < 10; i++) {      // Hundreds
+      for (int i = 0; i < maxCount; i++) {      // Hundreds
         actualTime -= speedAdjustment;
         
-        for (int j = 0; j < 6; j++) {     // Tens
+        for (int j = 0; j < minCount; j++) {     // Tens
           
-          for (int k = 0; k < 10; k++) {  // Ones
+          for (int k = 0; k < maxCount; k++) {  // Ones
 
             if (digitalRead(btn) == HIGH) {
                 pause(btn, del);
@@ -82,11 +74,6 @@ void loop() {
     }
   }
 }
-
-// *******************************************
-// Helper functions
-// *******************************************
-
 
 void pause(int theBtn, int theDel) {
 
